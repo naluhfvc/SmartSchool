@@ -12,35 +12,27 @@ namespace SmartSchool.API.Controllers
     [ApiController]
     public class ProfessorController : ControllerBase
     {
-        private readonly SmartContext _context;
+        private readonly IRepository _repo;
 
-        public ProfessorController(SmartContext context)
+        public ProfessorController(IRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: api/<ProfessorController>
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_context.Professores);
+            var result = _repo.GetAllProfessores();
+
+            return Ok(result);
         }
 
-        // GET api/<ProfessorController>/byId?id=
-        [HttpGet("byId")]
+        // GET api/<ProfessorController>/id
+        [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var professor = _context.Professores.FirstOrDefault(p => p.Id == id);
-            if (professor == null) return NotFound("Professor não encontrado.");
-
-            return Ok(professor);
-        }
-
-        // GET api/<ProfessorController>/byName?name=
-        [HttpGet("byname")]
-        public IActionResult GetByName(string name)
-        {
-            var professor = _context.Professores.FirstOrDefault(p => p.Nome.Contains(name));
+            var professor = _repo.GetProfessorById(id);
             if (professor == null) return NotFound("Professor não encontrado.");
 
             return Ok(professor);
@@ -50,36 +42,53 @@ namespace SmartSchool.API.Controllers
         [HttpPost]
         public IActionResult Post(Professor professor)
         {
-            _context.Add(professor);
-            _context.SaveChanges();
+            _repo.Add(professor);
+            if (_repo.SaveChanges())
+                return Ok(professor);
 
-            return Ok(professor);
+            return BadRequest("Erro ao cadastrar professor.");
         }
 
-        // PUT api/<ProfessorController>/5
+        // PUT api/<ProfessorController>/id
         [HttpPut("{id}")]
         public IActionResult Put(int id, Professor professor)
         {
-            var professorDB = _context.Professores.AsNoTracking().FirstOrDefault(p => p.Id == id);
-            if (professorDB == null) return NotFound("Professor não encontrado");
+            var professorDB = _repo.GetProfessorById(id);
+            if (professorDB == null) return NotFound("Professor não encontrado.");
 
-            _context.Update(professor);
-            _context.SaveChanges();
+            _repo.Update(professor);
+            if (_repo.SaveChanges())
+                return Ok(professor);
 
-            return Ok(professor);
+            return BadRequest("Erro ao atualizar professor.");
+        }        
+        
+        // PATCH api/<ProfessorController>/id
+        [HttpPut("{id}")]
+        public IActionResult Patch(int id, Professor professor)
+        {
+            var professorDB = _repo.GetProfessorById(id);
+            if (professorDB == null) return NotFound("Professor não encontrado.");
+
+            _repo.Update(professor);
+            if (_repo.SaveChanges())
+                return Ok(professor);
+
+            return BadRequest("Erro ao atualizar professor.");
         }
 
-        // DELETE api/<ProfessorController>/5
+        // DELETE api/<ProfessorController>/id
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var professor = _context.Professores.AsNoTracking().FirstOrDefault(p => p.Id == id);
-            if (professor == null) return NotFound("Professor não encontrado");
+            var professor = _repo.GetProfessorById(id);
+            if (professor == null) return NotFound("Professor não encontrado.");
 
-            _context.Remove(professor);
-            _context.SaveChanges();
+            _repo.Delete(professor);
+            if (_repo.SaveChanges())
+                return Ok(professor);
 
-            return Ok();
+            return BadRequest("Erro ao deletar professor.");
         }
     }
 }
