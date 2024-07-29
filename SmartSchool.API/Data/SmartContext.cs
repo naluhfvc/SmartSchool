@@ -6,9 +6,8 @@ namespace SmartSchool.API.Data
 {
     public class SmartContext : DbContext
     {
-        public SmartContext(DbContextOptions<SmartContext> options) : base(options)
-        {
-        }
+        public SmartContext(DbContextOptions<SmartContext> options) : base(options){}
+
         public DbSet<Aluno> Alunos { get; set; }
         public DbSet<AlunoCurso> AlunosCursos { get; set; }
         public DbSet<AlunoDisciplina> AlunosDisciplinas { get; set; }
@@ -20,6 +19,9 @@ namespace SmartSchool.API.Data
         {
             builder.Entity<AlunoDisciplina>()
                 .HasKey(AD => new { AD.AlunoId, AD.DisciplinaId });
+
+            builder.Entity<AlunoCurso>()
+                .HasKey(AD => new { AD.AlunoId, AD.CursoId });
 
             builder.Entity<Professor>()
                 .HasData(new List<Professor>(){
