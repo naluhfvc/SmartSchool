@@ -6,11 +6,10 @@ namespace SmartSchool.API.Modelss
     {
         public Disciplina() { }
 
-        public Disciplina(int id, string nome, int cargaHoraria, int professorId, int cursoId)
+        public Disciplina(int id, string nome, int professorId, int cursoId)
         {
             Id = id;
             Nome = nome;
-            CargaHoraria = cargaHoraria;
             ProfessorId = professorId;
             CursoId = cursoId;
         }
