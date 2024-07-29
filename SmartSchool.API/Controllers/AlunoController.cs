@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartSchool.API.Data;
+using SmartSchool.API.DTOs;
 using SmartSchool.API.Modelss;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,19 +14,21 @@ namespace SmartSchool.API.Controllers
     public class AlunoController : ControllerBase
     {
         public readonly IRepository _repo;
+        private readonly IMapper _mapper;
 
-        public AlunoController(IRepository repo)
+        public AlunoController(IRepository repo, IMapper mapper)
         {
             _repo = repo;
+            _mapper = mapper;
         }
 
         // GET: api/<AlunoController>
         [HttpGet]
         public IActionResult Get()
         {
-            var result = _repo.GetAllAlunos(true);
+            var alunos = _repo.GetAllAlunos(true);
 
-            return Ok(result);
+            return Ok(_mapper.Map<IEnumerable<AlunoDTO>>(alunos));
         }
 
         // GET api/<AlunoController>/id
@@ -42,9 +46,9 @@ namespace SmartSchool.API.Controllers
         public IActionResult Post(Aluno aluno)
         {
             _repo.Add(aluno);
-            if(_repo.SaveChanges())
+            if (_repo.SaveChanges())
                 return Ok(aluno);
-            
+
             return BadRequest("Erro ao cadastrar aluno.");
         }
 

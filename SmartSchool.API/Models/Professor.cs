@@ -7,12 +7,15 @@
         public Professor(int id, 
                          int registro, 
                          string nome, 
-                         string sobrenome)
+                         string sobrenome,
+                         string telefone
+                         )
         {
             Id = id;
             Registro = registro;
             Nome = nome;
             Sobrenome = sobrenome;
+            Telefone = telefone;
         }
 
         public int Id { get; set; }
